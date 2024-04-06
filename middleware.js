@@ -1,29 +1,21 @@
-import { next } from "@vercel/edge";
+import { NextResponse } from 'next/server'
 
-export const config = {
-  matcher: '/(.*)', 
-};
+export function middleware(req) {
+  const basicAuth = req.headers.get('authorization')
 
-export default function middleware(request) {
-  const authorizationHeader = request.headers.get("authorization");
+  if (basicAuth) {
+    const auth = basicAuth.split(' ')[1]
+    const [user, pwd] = Buffer.from(auth, 'base64').toString().split(':')
 
-  if (authorizationHeader) {
-    const basicAuth = authorizationHeader.split(" ")[1];
-    const [user, password] = atob(basicAuth).toString().split(":");
-
-    if (user === "shinobugaoka" && password === "dekopin") {
-      return next();
-      res.writeHead(302, {
-      Location: "https://cover-blush.vercel.app/"
-    });
-    res.end();
+    if (user === process.env.BASIC_AUTH_USER && pwd === process.env.BASIC_AUTH_PASSWORD) {
+      return NextResponse.next()
     }
   }
 
-  return new Response("Basic Auth required", {
+  return new Response('Auth required', {
     status: 401,
     headers: {
-      "WWW-Authenticate": 'Basic realm="Secure Area"',
+      'WWW-Authenticate': 'Basic realm="Secure Area"',
     },
-  });
+  })
 }
