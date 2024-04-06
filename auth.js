@@ -1,7 +1,7 @@
 export default function (req, res) {
   // Basic認証で使用するユーザー名とパスワード
-  const username = 'admin';
-  const password = 'password';
+  const username = 'shinobugaoka';
+  const password = 'dekopin';
 
   // リクエストからAuthorizationヘッダーを取得
   const authHeader = req.headers.authorization;
