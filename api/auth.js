@@ -1,25 +1,29 @@
-export default function (req, res) {
-  // Basic認証で使用するユーザー名とパスワード
-  const username = 'shinobugaoka';
-  const password = 'dekopin';
+export default function(req, res) {
+  const { authorization } = req.headers;
 
-  // リクエストからAuthorizationヘッダーを取得
-  const authHeader = req.headers.authorization;
-
-  if (authHeader) {
-    const encoded = authHeader.split(' ')[1];
-    const decoded = Buffer.from(encoded, 'base64').toString('utf8');
-    const [reqUsername, reqPassword] = decoded.split(':');
-
-    // ユーザー名とパスワードのチェック
-    if (reqUsername === username && reqPassword === password) {
-      // 認証成功時のレスポンス、ここで必要な処理を行う
-      res.status(200).json({ message: '認証成功' });
-      return;
-    }
+  // 認証情報が提供されていない場合
+  if (!authorization) {
+    return res
+      .status(401)
+      .setHeader('WWW-Authenticate', 'Basic realm="Secure Area"')
+      .end('Access denied');
   }
 
-  // 認証が必要であることを示すHTTPステータスコードとヘッダーを設定
-  res.setHeader('WWW-Authenticate', 'Basic realm="Access to the site", charset="UTF-8"');
-  res.status(401).json({ message: '認証に失敗しました' });
+  // Basic認証のデコード
+  const [username, password] = Buffer.from(authorization.split(" ")[1], 'base64').toString().split(":");
+
+  // ここで設定したユーザー名とパスワード
+  if (username === 'shinobugaoka' && password === 'dekopin') {
+    // 認証成功：リダイレクト
+    res.writeHead(302, {
+      Location: "https://cover-blush.vercel.app/"
+    });
+    res.end();
+  } else {
+    // 認証失敗
+    return res
+      .status(401)
+      .setHeader('WWW-Authenticate', 'Basic realm="Secure Area"')
+      .end('Access denied');
+  }
 }
