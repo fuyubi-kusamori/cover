@@ -2,14 +2,14 @@
   "redirects": [
     {
       "source": "/",
-      "destination": "api/auth",
+      "destination": "/api/auth",
       "permanent": false,
       "statusCode": 307
     }
   ],
   "rewrites": [
     {
-      "source": "api/(.*)",
+      "source": "/api/(.*)",
       "destination": "/api/$1"
     }
   ]
