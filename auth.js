@@ -1,7 +1,7 @@
 export default function (req, res) {
   // Basic認証で使用するユーザー名とパスワード
-  const username = 'shinobugaoka';
-  const password = 'dekopin';
+  const username = 'admin';
+  const password = 'password';
 
   // リクエストからAuthorizationヘッダーを取得
   const authHeader = req.headers.authorization;
@@ -13,8 +13,9 @@ export default function (req, res) {
 
     // ユーザー名とパスワードのチェック
     if (reqUsername === username && reqPassword === password) {
-      // 認証成功時のレスポンス、ここで必要な処理を行う
-      res.status(200).json({ message: '認証成功' });
+      // 認証成功時、指定されたURLにリダイレクト
+      res.writeHead(302, { Location: 'https://cover-blush.vercel.app/' });
+      res.end();
       return;
     }
   }
